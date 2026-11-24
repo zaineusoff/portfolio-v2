@@ -55,3 +55,4 @@ The existing portfolio remains your rollback version. First record the existing 
 ## Local QA performed
 
 Static file/anchor checks; original-image and PDF byte comparison; JavaScript syntax check. In-memory Chromium checks (the execution environment blocks direct local HTTP/file browser navigation) passed at 320x740, 375x812, 390x844, 430x932, 768x1024, 1024x768 and 1440x1000: no horizontal page overflow, local image decoding, mobile menu where applicable, four case study dialogs, four video embed URLs/dialog cleanup, UniRide demo/reset, and native form validation. The run did not finish the 1920px case within its time limit. Third-party network resources were unavailable. Real iOS Safari, macOS Safari, other physical devices, actual video playback, form delivery and final GitHub Pages deployment have not been verified. The supplied screenshots are local Chromium renders using system-font fallbacks.
+Published using Github Pages.
