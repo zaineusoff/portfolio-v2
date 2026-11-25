@@ -1057,7 +1057,32 @@ html{scroll-behavior:auto;scroll-padding-top:80px;background:#05080f}body{overfl
  #journey .role-tagline{font-size:14px;margin-bottom:7px}
  #journey .role-chapter{font-size:9px;margin-bottom:7px}
 }
-</style></head>
+</style>
+<style id="zain-launch-refinements">
+/* Seamless handoff: native document scrolling, a single real portfolio. */
+html.handoff-ready #journey{height:750vh;height:750svh}
+html.handoff-ready #portfolio{margin-top:-100vh;margin-top:-100svh;z-index:4;--handoff:0;--edge-fade:0;--nav-shade:.92;--nav-border:.10;--opening-opacity:1;--opening-shift:0px;background:linear-gradient(to bottom,#05080f 0px,rgba(5,8,15,0) 180px),radial-gradient(ellipse at 15% 0%,#10233e55,transparent 40%),radial-gradient(ellipse at 90% 31%,#4e37151a,transparent 45%),#05080f}
+html.handoff-ready #portfolio::before{content:"";position:absolute;z-index:1;left:0;right:0;top:-108px;height:109px;pointer-events:none;opacity:var(--edge-fade);background:linear-gradient(to bottom,rgba(5,8,15,0),rgba(5,8,15,.40) 49%,#05080f 100%)}
+html.handoff-ready #portfolio .portfolio-nav{background:rgba(5,8,15,var(--nav-shade));border-bottom-color:rgba(158,187,224,var(--nav-border))}
+html.handoff-ready #portfolio.handoff-active{padding-top:calc(var(--handoff-nav-height,66px) * var(--handoff,0));overflow-anchor:none}
+html.handoff-ready #portfolio.handoff-active .portfolio-nav{position:fixed;top:0;left:0;right:0;opacity:var(--nav-appear,0);pointer-events:none}
+html.handoff-ready #portfolio.handoff-active #reading-progress{opacity:var(--nav-appear,0)}
+html.handoff-ready #portfolio .portfolio-opening .opening-row{opacity:var(--opening-opacity);transform:translate3d(0,var(--opening-shift),0)}
+html.handoff-ready #journey .sc-header{opacity:var(--exit-header,1)}
+html.handoff-ready #journey .sc-footer{opacity:var(--exit-footer,1)}
+html.handoff-ready #journey .stage.handoff-covered{pointer-events:none}
+html.handoff-ready #journey .stage.handoff-leaving .sc-footer{pointer-events:none}
+html.handoff-ready #journey .stage.handoff-leaving .sc-header{pointer-events:none}
+@media(max-width:700px){html.handoff-ready #portfolio::before{top:-78px;height:79px}}
+@media(prefers-reduced-motion:reduce){html.handoff-ready #portfolio .portfolio-opening .opening-row{transform:none}}
+/* Keep all direct contact channels; no form or unused second column. */
+#portfolio #contact .contact-container{display:block;max-width:780px;margin-inline:auto}
+#portfolio #contact .contact-info{min-width:0}
+#portfolio #contact .contact-info .contact-item:last-child{margin-bottom:0}
+#portfolio #contact .contact-item>div:last-child{min-width:0;overflow-wrap:anywhere}
+</style>
+
+</head>
 <body><a class="skip" href="#portfolio">Skip immersive introduction</a>
 <div id="journey"><div aria-label="Zain El immersive portfolio" class="stage" id="stage">
 <canvas aria-hidden="true" id="space"></canvas><div aria-hidden="true" class="visual-well" id="visual-well">
@@ -1244,21 +1269,7 @@ html{scroll-behavior:auto;scroll-padding-top:80px;background:#05080f}body{overfl
 </div>
 </div>
 </div>
-<form action="https://formsubmit.co/zainthworkspace@gmail.com" class="contact-form" id="form" method="POST">
-<input name="_captcha" type="hidden" value="true"/>
-<input id="form-return" name="_next" type="hidden"/>
-<input name="_subject" type="hidden" value="New submission from Portfolio!"/>
-<div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
-<input aria-label="Name" autocomplete="name" name="name" placeholder="Name" required="" type="text"/>
-<input aria-label="Email" autocomplete="email" name="email" placeholder="Email" required="" type="email"/>
-</div>
-<input aria-label="Subject" name="subject" placeholder="Subject" type="text"/>
-<textarea aria-label="Project message" name="message" placeholder="Tell me about your project..." required="" rows="5"></textarea>
-<button class="btn btn-primary" style="width:100%;" type="submit">Send Message</button>
-<p style="font-size:0.8rem; color:var(--muted); margin-top:12px; text-align:center;">
-              Your message will be sent through FormSubmit. You can also contact me directly by email.
-            </p>
-</form>
+
 </div>
 </div>
 </section><footer style="border-top:1px solid var(--card-border); padding:40px 0; text-align:center; color:var(--muted); font-size:0.9rem;">
@@ -1273,18 +1284,38 @@ html{scroll-behavior:auto;scroll-padding-top:80px;background:#05080f}body{overfl
 </footer></main>
 <dialog aria-labelledby="detail-title" id="detail-dialog"><div class="dialog-head"><div><span class="smallcap" id="detail-label">CASE STUDY</span><h3 id="detail-title"></h3></div><button aria-label="Close dialog" class="dialog-close" type="button">×</button></div><div id="detail-body"></div></dialog><script>(()=>{'use strict';
 const $=id=>document.getElementById(id),stage=$('stage'),journey=$('journey'),canvas=$('space'),ctx=canvas.getContext('2d',{alpha:true}),well=$('visual-well');
+document.documentElement.classList.add('handoff-ready');const portfolio=$('portfolio');
 const scenes=[$('intro'),$('hero'),$('story-growth'),$('story-build'),$('story-film')],exhibits=Array.from(well.querySelectorAll('.exhibit')),stops=[0,.275,.49,.705,.94];
 const clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x)),mix=(a,b,t)=>a+(b-a)*t,smooth=(a,b,x)=>{let q=clamp((x-a)/(b-a));return q*q*(3-2*q)},TAU=Math.PI*2;
-const reduced=matchMedia('(prefers-reduced-motion: reduce)');let paused=reduced.matches,W=1,H=1,D=1,VW=1,VH=1,mobile=false,target=0,p=0,active=-1,t=0,last=0,dirty=true,hidden=document.hidden,mouseX=0,mouseY=0,px=0,py=0,renderFrame=0,visible=true,stars=[],portraitParticles=[],portraitReady=false,layoutQueued=false;let seed=623059;
+const reduced=matchMedia('(prefers-reduced-motion: reduce)');let paused=reduced.matches,W=1,H=1,D=1,VW=1,VH=1,mobile=false,target=0,p=0,handoff=0,covered=false,active=-1,t=0,last=0,dirty=true,hidden=document.hidden,mouseX=0,mouseY=0,px=0,py=0,renderFrame=0,visible=true,stars=[],portraitParticles=[],portraitReady=false,layoutQueued=false;let seed=623059;
 function rand(){seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296}function gaussian(){return Math.sqrt(-2*Math.log(Math.max(1e-6,rand())))*Math.cos(TAU*rand())}
 for(let i=0;i<4900;i++){let z=rand()*240,x=(rand()-.5)*192,y=(rand()-.5)*150,kind=rand();if(i>2800)y=.23*x+gaussian()*10;stars.push([x,y,z,.54+Math.pow(rand(),4)*2.3,(i>2800?.13:.30)+Math.pow(rand(),1.9)*(i>2800?.27:.62),kind])}
 const photo=$('assembled-portrait'),particleCanvas=$('portrait-particles'),pc=particleCanvas.getContext('2d',{alpha:true}),photoWindow=$('portrait-window'),frameParts=Array.from(exhibits[0].querySelectorAll('.portrait-glass')),portraitShell=$('portrait-shell');let PW=1,PH=1,partW=1,partH=1,PD=1,photoOffX=0,photoOffY=0;
-function getScrollMax(){return Math.max(1,journey.offsetHeight-stage.offsetHeight)}
-function readScroll(){const raw=clamp((scrollY-journey.offsetTop)/getScrollMax());let i=0;while(i<3&&raw>stops[i+1])i++;target=clamp(i+(raw-stops[i])/(stops[i+1]-stops[i]),0,4);dirty=true}
+function getScrollMax(){return Math.max(1,portfolio.offsetTop-journey.offsetTop-stage.offsetHeight)}
+function readScroll(){
+ const max=getScrollMax(),distance=scrollY-journey.offsetTop,raw=clamp(distance/max);
+ let i=0;while(i<3&&raw>stops[i+1])i++;
+ target=clamp(i+(raw-stops[i])/(stops[i+1]-stops[i]),0,4);
+ handoff=clamp((distance-max)/Math.max(1,stage.offsetHeight));
+ const h=handoff;
+ const set=(el,k,v)=>el.style.setProperty(k,String(v));
+ set(portfolio,'--handoff',h.toFixed(4));set(portfolio,'--edge-fade',smooth(0,.16,h)*(1-smooth(.88,1,h)));
+ set(portfolio,'--nav-shade',mix(.18,.92,smooth(.12,.70,h)));set(portfolio,'--nav-border',.10*smooth(.15,.94,h));
+ const nav=portfolio.querySelector('.portfolio-nav');
+ set(portfolio,'--handoff-nav-height',nav.offsetHeight+'px');
+ set(portfolio,'--nav-appear',smooth(.13,.40,h));
+ const crossing=h>0&&h<.999;
+ portfolio.classList.toggle('handoff-active',crossing);nav.inert=crossing;
+ set(portfolio,'--opening-opacity',mix(.58,1,smooth(.14,.75,h)));set(portfolio,'--opening-shift',((1-smooth(.14,.83,h))*12).toFixed(2)+'px');
+ set(stage,'--exit-header',1-smooth(0,.19,h));set(stage,'--exit-footer',1-smooth(0,.19,h));
+ stage.classList.toggle('handoff-leaving',h>.32);stage.classList.toggle('handoff-covered',h>=.999);
+ stage.inert=h>=.999;
+ dirty=true;
+}
 addEventListener('scroll',readScroll,{passive:true});
 function go(ch){let dest=ch>4?$('portfolio').offsetTop:journey.offsetTop+getScrollMax()*stops[clamp(ch,0,4)];scrollTo({top:dest,behavior:paused?'instant':'smooth'})}
 $('home').onclick=()=>go(0);for(let i=0;i<5;i++)$('nav'+i).onclick=()=>go(i);$('advance').onclick=()=>go(Math.max(0,active)+1);
-document.querySelectorAll('#journey a[href^="#"], #portfolio a[href="#journey"]').forEach(a=>a.addEventListener('click',e=>{let el=document.querySelector(a.getAttribute('href'));if(!el)return;e.preventDefault();el.scrollIntoView({behavior:paused?'instant':'smooth',block:'start'});history.replaceState(null,'',a.getAttribute('href'))}));
+document.querySelectorAll('#journey a[href^="#"], #portfolio a[href="#journey"]').forEach(a=>a.addEventListener('click',e=>{let el=document.querySelector(a.getAttribute('href'));if(!el)return;e.preventDefault();if(el===portfolio){go(5)}else if(el===journey){go(0)}else{el.scrollIntoView({behavior:paused?'instant':'smooth',block:'start'})}try{history.replaceState(null,'',a.getAttribute('href'))}catch(_){}}));
 function syncMotion(){$('motion').setAttribute('aria-pressed',String(paused));$('motion').setAttribute('aria-label',paused?'Resume ambient motion':'Pause ambient motion');$('motion').innerHTML=paused?'<svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m7 4 9 6-9 6z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>':'<svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M7 4v12m6-12v12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>';dirty=true}
 $('motion').onclick=()=>{paused=!paused;syncMotion()};syncMotion();if(reduced.addEventListener)reduced.addEventListener('change',e=>{paused=e.matches;syncMotion()});
 addEventListener('pointermove',e=>{if(e.pointerType==='mouse'&&!paused){mouseX=(e.clientX/W-.5)*2;mouseY=(e.clientY/H-.5)*2;dirty=true}},{passive:true});addEventListener('pointerleave',()=>{mouseX=mouseY=0;dirty=true});document.addEventListener('visibilitychange',()=>{hidden=document.hidden;last=0;dirty=true});
@@ -1306,12 +1337,12 @@ function artwork(i,progress){let d=progress-i;const enter=smooth(-.85,-.06,d),le
 }
 function renderParticles(assembly,alpha){if(!pc)return;let frameIn=smooth(.22,.82,assembly);for(let el of frameParts)el.style.opacity=frameIn;portraitShell.style.background=assembly<.96?`linear-gradient(140deg,rgba(220,232,245,${.14*frameIn}),rgba(41,67,100,${.42*frameIn}) 49%,rgba(21,26,33,${.95*frameIn}))`:'';photoWindow.style.backgroundColor=`rgba(9,15,24,${frameIn*.95})`;let texture=smooth(.70,.99,assembly);photo.style.opacity=texture;particleCanvas.style.opacity=1-texture;pc.setTransform(PD,0,0,PD,0,0);pc.clearRect(0,0,partW,partH);if(!portraitReady||assembly>=.998||alpha<.015||paused&&assembly>.5)return;const cx=partW*.5-exhibits[0].offsetWidth*.5+photoOffX+PW*.5,cy=partH*.5-exhibits[0].offsetHeight*.5+photoOffY+PH*.5;const intensity=smooth(0,.14,assembly),cell=PW/(mobile?42:64);for(let q of portraitParticles){let a=smooth(q.delay,Math.min(.96,.78+q.delay),assembly),remain=1-a,ang=q.tw*remain+Math.sin(remain*Math.PI)*.6,z=q.z*remain,scale=520/Math.max(250,520-z),sx=(q.x*Math.cos(ang)-q.y*Math.sin(ang))*remain+q.fx*a,sy=(q.x*Math.sin(ang)+q.y*Math.cos(ang))*remain+q.fy*a;let wobble=Math.sin(t*.8+q.spin)*remain*1.5;let X=cx+(sx+wobble)*scale,Y=cy+(sy+wobble)*scale;let r=mix(q.size,cell*.68,a)*scale;pc.globalAlpha=intensity*mix(.42+q.shine*.45,.55+Math.min(1,q.lum/180)*.45,a);pc.fillStyle=a>.52?q.color:q.origin;if(a<.38&&q.shine>.94){pc.fillRect(X-r*2,Y-.35,r*4,.7);pc.fillRect(X-.35,Y-r*2,.7,r*4)}pc.fillRect(X-r*.5,Y-r*.5,Math.max(.6,r),Math.max(.6,r));}pc.globalAlpha=1;}
 const glows=['#395a8a52','#a1783b46','#3a65a84d','#a38b7140'];const labels=['Scroll to discover','Continue to marketing','Discover digital products','Enter the creative studio','Explore the full portfolio'];
-function renderUI(){let next=clamp(Math.round(p),0,4),maxArt=0;stage.style.setProperty('--p',p/4);scenes.forEach((el,i)=>{let d=p-i,enter=i===0?1:smooth(-.63,-.13,d),leave=i===0?smooth(.10,.43,p):i===4?0:smooth(.18,.69,d),opacity=enter*(1-leave);if(paused)opacity=i===next?1:0;el.style.opacity=opacity;el.style.visibility=opacity<.004?'hidden':'visible';el.style.transform=paused?'none':`translate3d(0,${(1-enter)*28-leave*37}px,0)`});
- let assemb=smooth(.14,.95,p);if(paused)assemb=next>=1?1:0;for(let j=0;j<exhibits.length;j++){let el=exhibits[j],i=j+1,s=artwork(i,p);if(i===1)s.alpha=smooth(.07,.49,p)*(1-smooth(1.08,1.84,p));if(i===4)s.alpha=smooth(3.17,3.94,p);if(paused)s.alpha=next===i?1:0;maxArt=Math.max(maxArt,s.alpha);el.style.visibility=s.alpha<.005?'hidden':'visible';el.style.opacity=s.alpha;el.style.transform=`translate3d(calc(-50% + ${s.x.toFixed(2)}px),calc(-50% + ${s.y.toFixed(2)}px),${s.z.toFixed(2)}px) rotateY(${s.yaw.toFixed(3)}deg) rotateX(${s.pitch.toFixed(3)}deg) rotateZ(${s.roll.toFixed(3)}deg)`;el.dataset.enter=s.enter.toFixed(4);el.dataset.exit=s.leave.toFixed(4);el.dataset.depth=s.z.toFixed(3);if(i===1)renderParticles(assemb,s.alpha)}
+function renderUI(){let next=clamp(Math.round(p),0,4),maxArt=0;stage.style.setProperty('--p',p/4);scenes.forEach((el,i)=>{let d=p-i,enter=i===0?1:smooth(-.63,-.13,d),leave=i===0?smooth(.10,.43,p):i===4?0:smooth(.18,.69,d),opacity=enter*(1-leave);if(paused)opacity=i===next?1:0;const exit=i===4?smooth(.15,.77,handoff):0;opacity*=1-exit;el.style.opacity=opacity;el.style.visibility=opacity<.004?'hidden':'visible';el.style.transform=paused?'none':`translate3d(${-exit*22}px,${(1-enter)*28-leave*37-exit*10}px,0)`});
+ let assemb=smooth(.14,.95,p);if(paused)assemb=next>=1?1:0;for(let j=0;j<exhibits.length;j++){let el=exhibits[j],i=j+1,s=artwork(i,p);if(i===1)s.alpha=smooth(.07,.49,p)*(1-smooth(1.08,1.84,p));if(i===4)s.alpha=smooth(3.17,3.94,p);if(paused)s.alpha=next===i?1:0;if(i===4){const exit=smooth(.015,.70,handoff);s.alpha*=1-exit;if(!paused){s.x-=exit*VW*.43;s.y-=exit*VH*.24;s.z+=exit*(mobile?145:285);s.yaw+=exit*25;s.pitch-=exit*6;s.roll+=exit*3;}s.leave=exit;}maxArt=Math.max(maxArt,s.alpha);el.style.visibility=s.alpha<.005?'hidden':'visible';el.style.opacity=s.alpha;el.style.transform=`translate3d(calc(-50% + ${s.x.toFixed(2)}px),calc(-50% + ${s.y.toFixed(2)}px),${s.z.toFixed(2)}px) rotateY(${s.yaw.toFixed(3)}deg) rotateX(${s.pitch.toFixed(3)}deg) rotateZ(${s.roll.toFixed(3)}deg)`;el.dataset.enter=s.enter.toFixed(4);el.dataset.exit=s.leave.toFixed(4);el.dataset.depth=s.z.toFixed(3);if(i===1)renderParticles(assemb,s.alpha)}
  stage.style.setProperty('--art',maxArt);stage.style.setProperty('--glow',glows[Math.max(0,next-1)]);if(active!==next){active=next;scenes.forEach((el,i)=>{el.classList.toggle('active',i===active);el.setAttribute('aria-hidden',String(i!==active));el.inert=i!==active;$('nav'+i).setAttribute('aria-current',String(i===active))});$('current').textContent=String(active).padStart(2,'0');$('advance-text').textContent=labels[active]}
  return assemb;
 }
-function frame(now){requestAnimationFrame(frame);if(hidden)return;if(journey.getBoundingClientRect().bottom<=0){last=0;return}if(last&&now-last<(mobile?28:15))return;let dt=last?Math.min((now-last)/1000,.07):.016;last=now;const diff=Math.abs(target-p);if(paused&&!dirty&&diff<.0003)return;if(!paused)t+=dt;p=paused?target:mix(p,target,1-Math.exp(-dt*12));if(Math.abs(target-p)<.0002)p=target;px=mix(px,paused?0:mouseX,.09);py=mix(py,paused?0:mouseY,.09);let assembly=renderUI();let travel=p*83+t*.48;starfield(travel,mix(1,.35,smooth(.27,1,p)));dirty=diff>.0003;renderFrame++;window.__zainPreview={engine:'canvas-3d+css-perspective',progress:p,chapter:active,assembly,particles:portraitParticles.length,frame:renderFrame,paused,travel,width:W,height:H,depths:exhibits.map(e=>Number(e.dataset.depth)),ready:portraitReady};}
+function frame(now){requestAnimationFrame(frame);if(hidden)return;if(handoff>=1){if(!covered){p=target;renderUI();starfield(0,0);covered=true;if(window.__zainPreview){Object.assign(window.__zainPreview,{handoff:1,progress:p,chapter:active,covered:true})}}last=0;return}if(covered){covered=false;dirty=true;}if(last&&now-last<(mobile?28:15))return;let dt=last?Math.min((now-last)/1000,.07):.016;last=now;const diff=Math.abs(target-p);if(paused&&!dirty&&diff<.0003)return;if(!paused)t+=dt;p=paused?target:mix(p,target,1-Math.exp(-dt*12));if(Math.abs(target-p)<.0002)p=target;px=mix(px,paused?0:mouseX,.09);py=mix(py,paused?0:mouseY,.09);let assembly=renderUI();let travel=p*83+t*.48+(paused?0:handoff*42);starfield(travel,mix(1,.35,smooth(.27,1,p))*(1-smooth(.30,.99,handoff)));dirty=diff>.0003;renderFrame++;window.__zainPreview={engine:'canvas-3d+css-perspective',progress:p,chapter:active,handoff,covered:false,assembly,particles:portraitParticles.length,frame:renderFrame,paused,travel,width:W,height:H,depths:exhibits.map(e=>Number(e.dataset.depth)),ready:portraitReady};}
 $('motion-status').textContent='Spatial motion';resize();p=target;requestAnimationFrame(frame);
 })();
 </script><script>document.documentElement.classList.add('js')
@@ -1413,7 +1444,6 @@ $('motion-status').textContent='Spatial motion';resize();p=target;requestAnimati
   const int=new Intl.NumberFormat('en-MY',{maximumFractionDigits:0});const money=n=>'RM'+int.format(n);
   function lab(){const t=+$('#traffic').value,c=+$('#conversion').value,a=+$('#aov').value,orders=t*c/100,rev=orders*a;$('#traffic-value').textContent=int.format(t);$('#conversion-value').textContent=c.toFixed(1)+'%';$('#aov-value').textContent=money(a);$('#lab-revenue').textContent=money(rev);$('#lab-orders').textContent=int.format(orders);const power=Math.min(1,Math.log1p(rev)/Math.log1p(1600000));$$('.lab-bars i').forEach((bar,i)=>bar.style.height=Math.round(Math.max(8,power*(20+(i+1)*6)))+'%')}
   ['traffic','conversion','aov'].forEach(id=>document.getElementById(id).addEventListener('input',lab));$('#lab-reset').addEventListener('click',()=>{$('#traffic').value=20000;$('#conversion').value=2;$('#aov').value=80;lab()});lab();
-  const returnField=$('#form-return');if(returnField){returnField.value=location.protocol.startsWith('http')?location.href.split('#')[0]+'#contact':'https://zaintheusoff.work/';}
 })();
 </script></body>
 </html>
